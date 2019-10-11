@@ -43,3 +43,7 @@ def mnistfashion_data(batch_size):
     test_data = gluon.data.DataLoader(mnist_test, batch_size, shuffle=False)
     
     return train_data, test_data
+
+
+def square_loss(yhat, y):
+    return (yhat -  y.reshape(yhat.shape)) ** 2
