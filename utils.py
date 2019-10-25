@@ -42,15 +42,19 @@ def square_loss(yhat, y):
     return (yhat -  y.reshape(yhat.shape)) ** 2
 
 
-def load_data_fashion_mnist(batch_size, datasets='datasets'):
+def load_data_fashion_mnist(batch_size, datasets='datasets', transform=None):
+
     def _transform_mnist(data, label):
         return nd.transpose(
             data.astype('float32'), (2,0,1))/255, label.astype('float32')
 
+    if None == transform:
+        transform = _transform_mnist
+
     mnist_train = gluon.data.vision.FashionMNIST(
-        root=datasets, train=True, transform=_transform_mnist)
+        root=datasets, train=True, transform=transform)
     mnist_test = gluon.data.vision.FashionMNIST(
-        root=datasets, train=False, transform=_transform_mnist)
+        root=datasets, train=False, transform=transform)
 
     train_data = gluon.data.DataLoader(mnist_train, batch_size, shuffle=True)
     test_data = gluon.data.DataLoader(mnist_test, batch_size, shuffle=False)
@@ -73,3 +77,8 @@ def try_gpu():
     except:
         ctx = mx.cpu()
     return ctx
+
+
+def transform_mnist(data, label):
+    # change data from height x weight x channel to channel x height x weight
+    return nd.transpose(data.astype('float32'), (2,0,1))/255, label.astype('float32')
